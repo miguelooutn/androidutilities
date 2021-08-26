@@ -1,11 +1,22 @@
 plugins {
     id 'java-library'
     id 'kotlin'
+    id 'maven'
 }
 
 java {
     sourceCompatibility = JavaVersion.VERSION_1_8
     targetCompatibility = JavaVersion.VERSION_1_8
+}
+
+task installArchives(type: Upload) {
+    description "Installs the artifacts to the local Maven repository."
+    repositories.mavenInstaller {
+        configuration = configurations.default
+        pom.groupId = 'miguelooutn'
+        pom.artifactId = 'androidutilities'
+        pom.version = '1.0.0'
+    }
 }
 
 dependencies {
