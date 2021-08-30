@@ -56,11 +56,12 @@ public class UTMail {
             File file = new File(path);
             File[] logs = file.listFiles();
 
-
             MimeMultipart multipart = new MimeMultipart();
 
-            addAttachment(multipart,logs[0].getAbsolutePath());
-            
+            for (File log : logs) {
+                addAttachment(multipart,log.getAbsolutePath());
+            }
+
             Message message = new MimeMessage(session);
             message.setFrom(new InternetAddress(username));
             message.setRecipients(Message.RecipientType.TO,
