@@ -5,6 +5,7 @@ import com.hybridss.utilities.logger.LGFileLogger;
 import com.hybridss.utilities.logger.LGLogger;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Properties;
 
 import javax.mail.BodyPart;
@@ -27,11 +28,11 @@ public class UTMail {
 
     private final String username = "kops90@live.com";
     private final String password = "migueloo2550082";
-    private final String correo;
+    private final ArrayList<String>  correos;
 
 
-    public UTMail(String correo) {
-        this.correo = correo;
+    public UTMail(ArrayList<String> correos) {
+        this.correos = correos;
 
     }
 
@@ -56,15 +57,20 @@ public class UTMail {
             File file = new File(path);
             File[] logs = file.listFiles();
 
-
             MimeMultipart multipart = new MimeMultipart();
 
-            addAttachment(multipart,logs[0].getAbsolutePath());
-            
+            for (File log : logs) {
+                addAttachment(multipart,log.getAbsolutePath());
+            }
+
             Message message = new MimeMessage(session);
             message.setFrom(new InternetAddress(username));
-            message.setRecipients(Message.RecipientType.TO,
-                    InternetAddress.parse(correo));
+
+            for (String correo : correos){
+                message.setRecipients(Message.RecipientType.TO,
+                        InternetAddress.parse(correo));
+            }
+
             message.setSubject(subject);
             message.setContent(multipart);
 
