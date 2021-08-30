@@ -17,7 +17,6 @@ import static com.hybridss.utilities.logger.LGLogger.PATH;
 public class LGFileLogger {
     private static final int DEFAULT_LOG_MAX_FILE_SIZE = 1024;  // 1 MB
     private static final int DEFAULT_LOG_MAX_NUM_LOG_FILES = 5; // 5 archivos
-    private static String mLogsPath;
 
     //Función general que sirve para validar si se debe crear archivo nuevo, escribir en uno existen o eliminar el primero que se creo.
     public static void saveFile(StringBuilder logBuilder) {
@@ -42,29 +41,32 @@ public class LGFileLogger {
     //Crea la carpeta de logs
     private static void createFolders() {
         File documents = new File(PATH);
-        documents.mkdirs();
 
-        mLogsPath = PATH + "logs/";
-        File folderLogs = new File(mLogsPath);
+        getmLogsPath();
+        File folderLogs = new File(getmLogsPath());
         folderLogs.mkdirs();
+    }
+
+    public static String getmLogsPath(){
+        return  PATH + "logs/";
     }
 
     //Obtiene el total de archivos logs en la carpeta de log
     private static int getTotalLogFiles() {
         FilenameFilter textFilter = (dir, name) -> name.endsWith(".txt");
-        File folder = new File(mLogsPath);
+        File folder = new File(getmLogsPath());
         File[] listOfFiles = folder.listFiles(textFilter);
         return listOfFiles.length;
     }
 
     //Escribe la bitacora en el archivo
     private static void createLog(StringBuilder logBuilder, String logFileName) {
-        File logFile = new File(mLogsPath + logFileName);
+        File logFile = new File(getmLogsPath() + logFileName);
         try {
             if (!logFile.exists()) {
                 logFile.createNewFile();
             }
-            FileOutputStream outputStream = new FileOutputStream(new File(mLogsPath + logFileName), true);
+            FileOutputStream outputStream = new FileOutputStream(new File(getmLogsPath() + logFileName), true);
             outputStream.write(logBuilder.toString().getBytes());
             outputStream.close();
         } catch (Exception e) {
@@ -75,7 +77,7 @@ public class LGFileLogger {
     //Obtiene el nombre del archivo mas reciente o el más viejo
     private static String getNameOfFile(boolean recent) {
         FilenameFilter textFilter = (dir, name) -> name.endsWith(".txt");
-        File folder = new File(mLogsPath);
+        File folder = new File(getmLogsPath());
         File[] listOfFiles = folder.listFiles(textFilter);
         List<String> files = new ArrayList<>();
         for (File file:listOfFiles) {
@@ -92,7 +94,7 @@ public class LGFileLogger {
 
     //Verifica si se puede escribir en el mismo archivo validando el peso del mismo
     private static boolean getSizeFile(String name) {
-        File file = new File(mLogsPath+name);
+        File file = new File(getmLogsPath()+name);
         long size = file.length();
         return (int) (size / DEFAULT_LOG_MAX_FILE_SIZE) < DEFAULT_LOG_MAX_FILE_SIZE;
     }
@@ -106,7 +108,7 @@ public class LGFileLogger {
 
     //Elimina un archivo log
     private static void deleteFile(String name) {
-        File file = new File(mLogsPath+name);
+        File file = new File(getmLogsPath()+name);
         file.delete();
     }
 }
