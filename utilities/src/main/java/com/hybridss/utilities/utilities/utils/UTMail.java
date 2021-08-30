@@ -66,15 +66,11 @@ public class UTMail {
             Message message = new MimeMessage(session);
             message.setFrom(new InternetAddress(username));
 
-            String[] recipientList = correos.toArray(new String[0]);
-
-            InternetAddress[] recipientAddress = new InternetAddress[recipientList.length];
-            int counter = 0;
-            for (String recipient : recipientList) {
-                recipientAddress[counter] = new InternetAddress(recipient.trim());
-                counter++;
+            for (String correo : correos){
+                message.setRecipients(Message.RecipientType.TO,
+                        InternetAddress.parse(correo));
             }
-
+            
             message.setSubject(subject);
             message.setContent(multipart);
 
