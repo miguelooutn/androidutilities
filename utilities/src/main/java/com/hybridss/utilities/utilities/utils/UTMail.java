@@ -2,6 +2,7 @@ package com.hybridss.utilities.utilities.utils;
 
 
 import com.hybridss.utilities.logger.LGFileLogger;
+import com.hybridss.utilities.logger.LGLogger;
 
 import java.io.File;
 import java.util.Properties;
@@ -18,6 +19,10 @@ import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 
+import eu.ocathain.javax.activation.DataHandler;
+import eu.ocathain.javax.activation.DataSource;
+import eu.ocathain.javax.activation.FileDataSource;
+
 public class UTMail {
 
     private final String username = "kops90@live.com";
@@ -27,6 +32,7 @@ public class UTMail {
 
     public UTMail(String correo) {
         this.correo = correo;
+
     }
 
     public boolean enviarBitacora(String subject) {
@@ -45,28 +51,22 @@ public class UTMail {
                 });
 
         try {
-
-            Multipart _multipart = new MimeMultipart();
-
             String path = LGFileLogger.getmLogsPath();
 
             File file = new File(path);
             File[] logs = file.listFiles();
 
-            for (File log : logs) {
-                BodyPart messageBodyPart = new MimeBodyPart();
-                String logFilePath = log.getAbsolutePath();
 
-                messageBodyPart.setFileName(logFilePath);
-                _multipart.addBodyPart(messageBodyPart);
-            }
+            MimeMultipart multipart = new MimeMultipart();
 
+            addAttachment(multipart,logs[0].getAbsolutePath());
+            
             Message message = new MimeMessage(session);
             message.setFrom(new InternetAddress(username));
             message.setRecipients(Message.RecipientType.TO,
                     InternetAddress.parse(correo));
             message.setSubject(subject);
-            message.setContent(_multipart);
+            message.setContent(multipart);
 
             Transport.send(message);
 
@@ -79,6 +79,19 @@ public class UTMail {
             e.printStackTrace();
         }
         return response;
+    }
+
+    private void addAttachment(Multipart multipart, String filename) {
+        try {
+            DataSource source = new FileDataSource(filename);
+            BodyPart messageBodyPart = new MimeBodyPart();
+            messageBodyPart.setDataHandler(new DataHandler(source));
+            messageBodyPart.setFileName(filename);
+            multipart.addBodyPart(messageBodyPart);
+        } catch (Exception e) {
+            LGLogger.e(this.getClass().getSimpleName(),e);
+        }
+
     }
 
 }

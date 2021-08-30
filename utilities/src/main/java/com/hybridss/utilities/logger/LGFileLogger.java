@@ -41,8 +41,6 @@ public class LGFileLogger {
     //Crea la carpeta de logs
     private static void createFolders() {
         File documents = new File(PATH);
-
-        getmLogsPath();
         File folderLogs = new File(getmLogsPath());
         folderLogs.mkdirs();
     }
