@@ -74,7 +74,7 @@ public class UTMail {
                 recipientAddress[counter] = new InternetAddress(recipient.trim());
                 counter++;
             }
-            
+
             message.setSubject(subject);
             message.setContent(multipart);
 
