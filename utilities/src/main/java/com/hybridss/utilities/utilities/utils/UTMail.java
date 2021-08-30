@@ -18,6 +18,10 @@ import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 
+import eu.ocathain.javax.activation.DataHandler;
+import eu.ocathain.javax.activation.DataSource;
+import eu.ocathain.javax.activation.FileDataSource;
+
 public class UTMail {
 
     private final String username = "kops90@live.com";
@@ -25,8 +29,10 @@ public class UTMail {
     private final String correo;
 
 
+
     public UTMail(String correo) {
         this.correo = correo;
+
     }
 
     public boolean enviarBitacora(String subject) {
@@ -45,28 +51,28 @@ public class UTMail {
                 });
 
         try {
-
-            Multipart _multipart = new MimeMultipart();
-
             String path = LGFileLogger.getmLogsPath();
 
             File file = new File(path);
             File[] logs = file.listFiles();
 
-            for (File log : logs) {
-                BodyPart messageBodyPart = new MimeBodyPart();
-                String logFilePath = log.getAbsolutePath();
 
-                messageBodyPart.setFileName(logFilePath);
-                _multipart.addBodyPart(messageBodyPart);
-            }
+            MimeMultipart multipart = new MimeMultipart();
+
+            MimeBodyPart messageBodyPart = new MimeBodyPart();
+
+            DataSource source = new FileDataSource(logs[0]);
+            messageBodyPart.setDataHandler(new DataHandler(source));
+
+            multipart.addBodyPart(messageBodyPart);
+
 
             Message message = new MimeMessage(session);
             message.setFrom(new InternetAddress(username));
             message.setRecipients(Message.RecipientType.TO,
                     InternetAddress.parse(correo));
             message.setSubject(subject);
-            message.setContent(_multipart);
+            message.setContent(multipart);
 
             Transport.send(message);
 
