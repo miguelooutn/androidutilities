@@ -26,15 +26,9 @@ import eu.ocathain.javax.activation.FileDataSource;
 
 public class UTMail {
 
-    private String username = "kops90@live.com";
-    private String password = "migueloo2550082";
+    private String username;
+    private String password;
     private final ArrayList<String>  correos;
-
-
-    public UTMail(ArrayList<String> correos) {
-        this.correos = correos;
-
-    }
 
     public UTMail(ArrayList<String> correos, String username, String password) {
         this.correos = correos;
