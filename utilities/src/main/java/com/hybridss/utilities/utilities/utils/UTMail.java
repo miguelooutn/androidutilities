@@ -28,7 +28,7 @@ public class UTMail {
 
     private String username;
     private String password;
-    private final ArrayList<String>  correos;
+    private final ArrayList<String> correos;
 
     public UTMail(ArrayList<String> correos, String username, String password) {
         this.correos = correos;
@@ -47,7 +47,7 @@ public class UTMail {
             MimeMultipart multipart = new MimeMultipart();
 
             for (File log : logs) {
-                addAttachment(multipart,log.getAbsolutePath());
+                addAttachment(multipart, log.getAbsolutePath());
             }
 
             Message message = new MimeMessage(getSesion());
@@ -67,18 +67,70 @@ public class UTMail {
 
             Transport.send(message);
 
-            System.out.println("Done");
+            LGLogger.i(getClass().getSimpleName(), "Correo bitacora enviado correctamente");
             response = true;
 
         } catch (AddressException e) {
+            LGLogger.e(getClass().getSimpleName(),e);
             throw new RuntimeException(e);
         } catch (javax.mail.MessagingException e) {
+            LGLogger.e(getClass().getSimpleName(),e);
             e.printStackTrace();
         }
         return response;
     }
 
-    private boolean enviarHTML(String html, String subject){
+    private boolean enviarArchivos(String subject, ArrayList<String> paths) {
+        boolean response = false;
+        try {
+
+            ArrayList<File> arrayFiles = new ArrayList<>();
+
+            for (String path : paths) {
+                File file = new File(path);
+                if (file.exists()){
+                    arrayFiles.add(file);
+                } else {
+                    LGLogger.e(getClass().getSimpleName(), "El archivo: " + path + "\n no está disponible");
+                }
+            }
+
+            MimeMultipart multipart = new MimeMultipart();
+
+            for (File file : arrayFiles) {
+                addAttachment(multipart, file.getAbsolutePath());
+            }
+
+            Message message = new MimeMessage(getSesion());
+            message.setFrom(new InternetAddress(username));
+
+            String[] recipientList = correos.toArray(new String[0]);
+            InternetAddress[] recipientAddress = new InternetAddress[recipientList.length];
+            int counter = 0;
+            for (String recipient : recipientList) {
+                recipientAddress[counter] = new InternetAddress(recipient.trim());
+                counter++;
+            }
+            message.setRecipients(Message.RecipientType.TO, recipientAddress);
+
+            message.setSubject(subject);
+            message.setContent(multipart);
+
+            Transport.send(message);
+
+            LGLogger.i(getClass().getSimpleName(), "Correo enviado correctamente");
+            response = true;
+
+        } catch (AddressException e) {
+            LGLogger.e(getClass().getSimpleName(),e);
+            throw new RuntimeException(e);
+        } catch (javax.mail.MessagingException e) {
+            LGLogger.e(getClass().getSimpleName(),e);
+        }
+        return response;
+    }
+
+    private boolean enviarHTML(String html, String subject) {
         boolean response = false;
 
         try {
@@ -100,12 +152,14 @@ public class UTMail {
 
             Transport.send(message);
 
-            System.out.println("Done");
+            LGLogger.i(getClass().getSimpleName(), "Correo en html enviado correctamente");
             response = true;
 
         } catch (AddressException e) {
+            LGLogger.e(getClass().getSimpleName(),e);
             throw new RuntimeException(e);
         } catch (javax.mail.MessagingException e) {
+            LGLogger.e(getClass().getSimpleName(),e);
             e.printStackTrace();
         }
 
@@ -120,12 +174,12 @@ public class UTMail {
             messageBodyPart.setFileName(filename);
             multipart.addBodyPart(messageBodyPart);
         } catch (Exception e) {
-            LGLogger.e(this.getClass().getSimpleName(),e);
+            LGLogger.e(this.getClass().getSimpleName(), e);
         }
 
     }
 
-    private Session getSesion(){
+    private Session getSesion() {
         Session session = Session.getInstance(getProperties(),
                 new javax.mail.Authenticator() {
                     protected PasswordAuthentication getPasswordAuthentication() {
@@ -135,7 +189,7 @@ public class UTMail {
         return session;
     }
 
-    private Properties getProperties(){
+    private Properties getProperties() {
         Properties props = new Properties();
         props.put("mail.smtp.auth", "true");
         props.put("mail.smtp.starttls.enable", "true");
