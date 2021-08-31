@@ -92,10 +92,14 @@ public class UTMail {
             Message message = new MimeMessage(getSesion());
             message.setFrom(new InternetAddress(username));
 
-            for (String correo : correos){
-                message.setRecipients(Message.RecipientType.TO,
-                        InternetAddress.parse(correo));
+            String[] recipientList = correos.toArray(new String[0]);
+            InternetAddress[] recipientAddress = new InternetAddress[recipientList.length];
+            int counter = 0;
+            for (String recipient : recipientList) {
+                recipientAddress[counter] = new InternetAddress(recipient.trim());
+                counter++;
             }
+            message.setRecipients(Message.RecipientType.TO, recipientAddress);
 
             message.setSubject(subject);
             message.setContent(html, "text/html; charset=utf-8");
