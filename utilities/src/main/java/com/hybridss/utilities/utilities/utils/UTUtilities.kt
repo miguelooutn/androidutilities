@@ -6,6 +6,7 @@ import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
 
 object UTUtilities {
+    @JvmStatic
     fun base64Encoding(str: String): String {
         var str = str
         str = str.replace(" ", "+")
@@ -14,12 +15,14 @@ object UTUtilities {
         return String(Base64.encodeBase64(bytesEncoded.toByteArray()))
     }
 
+    @JvmStatic
     fun base64Dencoding(str: String): String {
         val bytesEncoded =
             String(str.toByteArray(StandardCharsets.UTF_8))
         return String(Base64.decodeBase64(bytesEncoded.toByteArray()))
     }
 
+    @JvmStatic
     fun encryptionPass(s: String): String {
         val MD5 = "MD5"
         try {
@@ -44,6 +47,7 @@ object UTUtilities {
         return ""
     }
 
+    @JvmStatic
     fun capitalizarPrimerPalabra(it: String): Any? {
         if (it.isEmpty()) return it
         else return it.substring(0, 1).toUpperCase() + it.substring(1).toLowerCase()

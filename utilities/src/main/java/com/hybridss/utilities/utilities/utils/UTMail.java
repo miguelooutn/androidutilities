@@ -1,12 +1,15 @@
 package com.hybridss.utilities.utilities.utils;
 
 
+import com.baz.utils.UTUtilities;
 import com.hybridss.utilities.logger.LGFileLogger;
 import com.hybridss.utilities.logger.LGLogger;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Locale;
 import java.util.Properties;
+import java.util.Random;
 
 import javax.mail.BodyPart;
 import javax.mail.Message;
@@ -36,51 +39,9 @@ public class UTMail {
         this.password = password;
     }
 
-    public boolean enviarBitacora(String subject) {
-        boolean response = false;
-        try {
-            String path = LGFileLogger.getmLogsPath();
 
-            File file = new File(path);
-            File[] logs = file.listFiles();
 
-            MimeMultipart multipart = new MimeMultipart();
-
-            for (File log : logs) {
-                addAttachment(multipart, log.getAbsolutePath());
-            }
-
-            Message message = new MimeMessage(getSesion());
-            message.setFrom(new InternetAddress(username));
-
-            String[] recipientList = correos.toArray(new String[0]);
-            InternetAddress[] recipientAddress = new InternetAddress[recipientList.length];
-            int counter = 0;
-            for (String recipient : recipientList) {
-                recipientAddress[counter] = new InternetAddress(recipient.trim());
-                counter++;
-            }
-            message.setRecipients(Message.RecipientType.TO, recipientAddress);
-
-            message.setSubject(subject);
-            message.setContent(multipart);
-
-            Transport.send(message);
-
-            LGLogger.i(getClass().getSimpleName(), "Correo bitacora enviado correctamente");
-            response = true;
-
-        } catch (AddressException e) {
-            LGLogger.e(getClass().getSimpleName(),e);
-            throw new RuntimeException(e);
-        } catch (javax.mail.MessagingException e) {
-            LGLogger.e(getClass().getSimpleName(),e);
-            e.printStackTrace();
-        }
-        return response;
-    }
-
-    private boolean enviarArchivos(String subject, ArrayList<String> paths) {
+    protected boolean enviarArchivos(String subject, ArrayList<String> paths) {
         boolean response = false;
         try {
 
@@ -130,7 +91,7 @@ public class UTMail {
         return response;
     }
 
-    private boolean enviarHTML(String html, String subject) {
+    protected boolean enviarHTML(String html, String subject) {
         boolean response = false;
 
         try {
