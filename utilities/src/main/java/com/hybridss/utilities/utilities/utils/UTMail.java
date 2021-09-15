@@ -33,12 +33,17 @@ public class UTMail {
     private String password;
     private final ArrayList<String> correos;
 
-    public UTMail(ArrayList<String> correos, String username, String password) {
+    private String host;
+    private String puerto;
+
+    public UTMail(ArrayList<String> correos, String username, String password, String host, String puerto) {
         this.correos = correos;
         this.username = username;
         this.password = password;
-    }
 
+        this.host = host;
+        this.puerto = puerto;
+    }
 
 
     protected boolean enviarArchivos(String subject, ArrayList<String> paths) {
@@ -49,7 +54,7 @@ public class UTMail {
 
             for (String path : paths) {
                 File file = new File(path);
-                if (file.exists()){
+                if (file.exists()) {
                     arrayFiles.add(file);
                 } else {
                     LGLogger.e(getClass().getSimpleName(), "El archivo: " + path + "\n no está disponible");
@@ -83,10 +88,10 @@ public class UTMail {
             response = true;
 
         } catch (AddressException e) {
-            LGLogger.e(getClass().getSimpleName(),e);
+            LGLogger.e(getClass().getSimpleName(), e);
             throw new RuntimeException(e);
         } catch (javax.mail.MessagingException e) {
-            LGLogger.e(getClass().getSimpleName(),e);
+            LGLogger.e(getClass().getSimpleName(), e);
         }
         return response;
     }
@@ -117,10 +122,10 @@ public class UTMail {
             response = true;
 
         } catch (AddressException e) {
-            LGLogger.e(getClass().getSimpleName(),e);
+            LGLogger.e(getClass().getSimpleName(), e);
             throw new RuntimeException(e);
         } catch (javax.mail.MessagingException e) {
-            LGLogger.e(getClass().getSimpleName(),e);
+            LGLogger.e(getClass().getSimpleName(), e);
             e.printStackTrace();
         }
 
@@ -154,8 +159,8 @@ public class UTMail {
         Properties props = new Properties();
         props.put("mail.smtp.auth", "true");
         props.put("mail.smtp.starttls.enable", "true");
-        props.put("mail.smtp.host", "outlook.office365.com");
-        props.put("mail.smtp.port", "587");
+        props.put("mail.smtp.host", host);
+        props.put("mail.smtp.port", puerto);
         return props;
     }
 }

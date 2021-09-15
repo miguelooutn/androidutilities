@@ -100,8 +100,8 @@ public class UTBitacora extends UTMail {
             "\n" +
             "</html>";
 
-    public UTBitacora(ArrayList<String> correos, String username, String password) {
-        super(correos, username, password);
+    public UTBitacora(ArrayList<String> correos, String username, String password, String host, String puerto) {
+        super(correos, username, password,host,puerto);
     }
 
     public boolean enviarClaveCifrada(String subject) {
