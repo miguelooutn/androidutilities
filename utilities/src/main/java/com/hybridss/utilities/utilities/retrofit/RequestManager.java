@@ -53,6 +53,13 @@ public class RequestManager {
     }
 
     public <T> T create(Class<T> service) {
+        HttpLoggingInterceptor interceptorLogger = new HttpLoggingInterceptor();
+        interceptorLogger.setLevel(HttpLoggingInterceptor.Level.BODY);
+
+        OkHttpClient.Builder httpClient = UnsafeOkHttpClient.getUnsafeOkHttpClient();
+        httpClient.addInterceptor(interceptorLogger);
+        retrofit.client(httpClient.build());
+        
         return retrofit.build().create(service);
     }
 
