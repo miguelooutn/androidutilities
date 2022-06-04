@@ -46,7 +46,7 @@ public class UTMail {
     }
 
 
-    protected boolean enviarArchivos(String subject, ArrayList<String> paths) {
+    public boolean enviarArchivos(String subject, ArrayList<String> paths) {
         boolean response = false;
         try {
 
@@ -96,7 +96,7 @@ public class UTMail {
         return response;
     }
 
-    protected boolean enviarHTML(String html, String subject) {
+    public boolean enviarHTML(String html, String subject) {
         boolean response = false;
 
         try {
